@@ -1,18 +1,31 @@
-const express = require('express');
 require('dotenv').config();
+
+const express = require('express');
+const cors = require('cors');
 const { dbConnection } = require('./DataBase/config');
 
+
+
+
+//INICIANDO EL SERVIDOR WEB
 const app = express();
-// Base de datos
+
+//CONFIGURANDO CORS
+app.use(cors());
+
+//lectura del body
+app.use(express.json());
+
+// INICIANDO CONEXIÓN A LA BD DE MONGO ATLAS
 dbConnection();
 
-//console.log(//process.env);
-//rutas
-app.get('/', (req, resp) => {
-    // resp.status(400).json({ ok: true, msg: 'listo' });
-    resp.json({ ok: true, msg: 'listo' });
-});
+//DEFINIENDO LA RUTA POR DEFECTO PARA USUARIOS
+app.use('/api/usuarios', require('./routes/usuarios'));
+app.use('/api/login', require('./routes/auth'));
 
+
+
+//PONIENDO A ESCUCHAR EL SERVIDOR EN EL PUERTO CONFIGURADO EN LAS VARIABLES DE ENTORNO DE NODE
 app.listen(process.env.PORT, () => {
     console.log("servidor corriendo en el puerto ", process.env.PORT);
 });
