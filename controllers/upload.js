@@ -2,9 +2,10 @@ const { response } = require("express");
 
 const { v4: uuidv4 } = require('uuid');
 const { updateImgHelper } = require("../helpers/updateImg");
-const { compareSync } = require("bcryptjs");
 const path = require('path');
 const fs = require('fs');
+
+
 const actualizarImagen = async(req, resp = response) => {
 
     try {
@@ -42,10 +43,10 @@ const actualizarImagen = async(req, resp = response) => {
             });
         }
 
-        const newName = `${uuidv4()}.${extension}`;
+        const newFileName = `${uuidv4()}.${extension}`;
 
         //path para guardar la imagen
-        const path = `./uploads/${collection}/${newName}`;
+        const path = `./uploads/${collection}/${newFileName}`;
 
         file.mv(path, (e) => {
             if (e) {
@@ -55,18 +56,16 @@ const actualizarImagen = async(req, resp = response) => {
                     msg: `Error al mover el archivo al directorio ${collection}`
                 });
             }
-
-
         });
 
 
         //actualizar BD
-        updateImgHelper(collection, id, newName);
+        updateImgHelper(collection, id, newFileName);
 
         return resp.json({
             ok: true,
             msg: "upload!",
-            newName
+            newName: newFileName
         });
 
 
@@ -86,7 +85,6 @@ const retornaImagen = async(req, resp = response) => {
 
     const { tipo, foto } = req.params;
     const oPathImg = path.join(__dirname, `../uploads/${tipo}/${foto}`);
-
 
     if (fs.existsSync(oPathImg)) {
         resp.sendfile(oPathImg);

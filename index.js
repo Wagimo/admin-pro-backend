@@ -16,6 +16,10 @@ app.use(express.json());
 // INICIANDO CONEXIÓN A LA BD DE MONGO ATLAS
 dbConnection();
 
+//lanzar index.html
+app.use(express.static('public'));
+
+
 //DEFINIENDO LA RUTA POR DEFECTO PARA USUARIOS
 app.use('/api/usuarios', require('./routes/usuarios'));
 app.use('/api/login', require('./routes/auth'));
