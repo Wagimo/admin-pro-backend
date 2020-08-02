@@ -47,21 +47,70 @@ const crearHospital = async(req, resp = response) => {
     }
 };
 
-const actualizarHospital = (req, resp = response) => {
+const actualizarHospital = async(req, resp = response) => {
 
-    return resp.status(200).json({
-        ok: true,
-        msg: 'Hospitales OK'
-    });
+    const id = req.params.id; // id del hospital enviado en la ruta
+    const uid = req.uid; //Id del usuario que paso por la validacion del token
+
+    try {
+
+        const hospital = await Hospital.findById(id);
+        if (!hospital) {
+            return resp.status(404).json({
+                ok: false,
+                msg: 'Hospitales no encontrado para actualización'
+            });
+        }
+
+        const cambiosHospital = {
+            ...req.body,
+            usuario: uid
+        };
+
+        const hospitalUpdate = await Hospital.findByIdAndUpdate(id, cambiosHospital, { new: true });
+
+        return resp.json({
+            ok: true,
+            hospitalUpdate
+        });
+
+    } catch (error) {
+        console.log(error);
+        return resp.status(500).json({
+            ok: false,
+            msg: 'Error inesperado'
+        });
+    }
 
 };
 
-const eliminarHospital = (req, resp = response) => {
+const eliminarHospital = async(req, resp = response) => {
 
-    return resp.status(200).json({
-        ok: true,
-        msg: 'Hospitales OK'
-    });
+    const id = req.params.id; // id del hospital enviado en la ruta
+
+    try {
+
+        const hospital = await Hospital.findById(id);
+        if (!hospital) {
+            return resp.status(404).json({
+                ok: false,
+                msg: 'Hospitales no encontrado para actualización'
+            });
+        }
+        await Hospital.findByIdAndDelete(id);
+
+        return resp.json({
+            ok: true,
+            msg: "Hospital Eliminado Satisfactoriamente!"
+        });
+
+    } catch (error) {
+        console.log(error);
+        return resp.status(500).json({
+            ok: false,
+            msg: 'Error inesperado'
+        });
+    }
 
 };
 

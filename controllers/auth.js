@@ -93,7 +93,7 @@ const googleSingIn = async(req, resp = response) => {
 
         await usuario.save();
 
-        const token = await generarToken(usuarioDb.id);
+        const token = await generarToken(usuario.id);
 
         return resp
             .json({
@@ -115,7 +115,32 @@ const googleSingIn = async(req, resp = response) => {
 
 };
 
+const renewToken = async(req, resp = response) => {
+
+    try {
+
+        const uid = req.uid;
+
+        const token = await generarToken(uid);
+
+        resp.json({
+            ok: true,
+            token
+        });
+
+    } catch (error) {
+        console.log(error);
+        return resp
+            .status(500)
+            .json({
+                ok: false,
+                msg: 'Error inesperado!'
+            });
+    }
+};
+
 module.exports = {
     loginusuario,
-    googleSingIn
+    googleSingIn,
+    renewToken
 };
